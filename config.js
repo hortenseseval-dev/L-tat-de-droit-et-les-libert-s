@@ -1,3 +1,3 @@
 window.EMC_CONFIG = {
-  endpoint: 'https://script.google.com/macros/s/AKfycbx-sdfZ3DOaL5iBpWSihUwMTE9I1LvHbZNqI6TDMrgeOtjkmQu_4PaOf8J8DzkoHAlA_A/exec'
+  endpoint: 'https://script.google.com/macros/s/AKfycbxJ5z_OWd3LF0-nlEjIXUpWv0LpgyK9I_u8dx7obmerfwiZZUCWzgVsrC2pZARUL-Ve/exec'
 };
