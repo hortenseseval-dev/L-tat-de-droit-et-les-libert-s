@@ -227,10 +227,11 @@ const CAPSULES = [
    ]}
 ];
 
+// Compétences du programme d'EMC (BO n° 24 du 13 juin 2024), dimensions du cadre « culture de la démocratie »
 const COMPS = [
- {id:'C1', name:'Connaître le vocabulaire du thème', max:8},
- {id:'C2', name:'Relier une situation à une notion', max:7},
- {id:'C3', name:'Analyser un cas et justifier', max:5}
+ {id:'C1', name:'Connaissances : règle et droit', max:9},
+ {id:'C2', name:'Valeurs et principes : libertés, laïcité, dignité', max:6},
+ {id:'C3', name:'Aptitudes : réflexion, discernement, esprit critique', max:5}
 ];
 const LEVELS = [
  {k:'na', label:'Non acquis', min:0},
@@ -243,11 +244,11 @@ function levelOf(pts, max){ const p = max ? pts*100/max : 0; let l = LEVELS[0]; 
 const EVAL = [
  {c:'C1', pts:1, type:'mcq', title:'Qu’est-ce qu’un État de droit ?', opts:['Un État où le président fait les lois seul','Une société où tout le monde, même l’État, doit respecter la loi','Un pays sans aucune loi','Un État où seuls les juges ont des droits'], ok:1},
  {c:'C1', pts:2, type:'multi', title:'Coche les 4 composantes de l’ordre public.', opts:['La sécurité','La richesse','La tranquillité','La salubrité','La célébrité','La dignité de la personne'], ok:[0,2,3,5]},
- {c:'C1', pts:1, type:'mcq', title:'En quelle année la loi sur la laïcité a-t-elle été votée ?', opts:['1789','1905','1948','2002'], ok:1},
+ {c:'C2', pts:1, type:'mcq', title:'En quelle année la loi sur la laïcité a-t-elle été votée ?', opts:['1789','1905','1948','2002'], ok:1},
  {c:'C1', pts:2, type:'order', title:'Classe les règles de la plus forte (en haut) à la plus faible (en bas).', items:['La Constitution','Les traités internationaux','Les lois','L’arrêté du maire']},
- {c:'C1', pts:1, type:'mcq', title:'Qu’est-ce que la liberté de conscience ?', opts:['Le droit de dire n’importe quoi','La liberté de croire, de changer de religion ou de ne pas croire','L’obligation de choisir une religion','Le droit de ne pas aller à l’école'], ok:1},
+ {c:'C2', pts:1, type:'mcq', title:'Qu’est-ce que la liberté de conscience ?', opts:['Le droit de dire n’importe quoi','La liberté de croire, de changer de religion ou de ne pas croire','L’obligation de choisir une religion','Le droit de ne pas aller à l’école'], ok:1},
  {c:'C1', pts:1, type:'mcq', title:'À quoi sert la Miviludes ?', opts:['À organiser les élections','À juger les mineurs','À surveiller les dérives sectaires et protéger les victimes','À voter les lois'], ok:2},
- {c:'C2', pts:3, type:'sort', title:'Individuelle ou collective ?', buckets:['Individuelle','Collective'], items:[['Donner son avis',0],['Se réunir dans une salle avec d’autres',1],['Voyager à l’étranger',0],['Faire grève',1],['Changer de religion',0],['Publier un journal avec une équipe',1]]},
+ {c:'C1', pts:3, type:'sort', title:'Individuelle ou collective ?', buckets:['Individuelle','Collective'], items:[['Donner son avis',0],['Se réunir dans une salle avec d’autres',1],['Voyager à l’étranger',0],['Faire grève',1],['Changer de religion',0],['Publier un journal avec une équipe',1]]},
  {c:'C2', pts:2, type:'sort', title:'Quelle composante de l’ordre public la règle protège-t-elle ?', buckets:['Sécurité','Tranquillité','Salubrité','Dignité'], items:[['Une fête foraine doit s’arrêter à minuit à cause du bruit.',1],['Il est interdit de jeter ses déchets dans la rivière.',2],['Un vieux pont qui risque de s’écrouler est fermé.',0],['Un jeu où l’on paie pour humilier une personne est interdit.',3]]},
  {c:'C2', pts:2, type:'sort', title:'Croyance libre ou dérive sectaire ?', buckets:['Libre','Dérive'], items:[['Nina prie avant chaque repas.',0],['Un « coach » oblige Yanis à couper son téléphone avec sa famille.',1],['Tom décide de ne plus croire en Dieu.',0],['Un groupe interdit à Lou de voir un médecin.',1]]},
  {c:'C3', pts:1, type:'mcq', case:true, title:'Quelle liberté est limitée par la décision du maire ?', opts:['Une liberté individuelle : circuler','Une liberté collective : se réunir','La liberté de conscience','Aucune liberté'], ok:1},
