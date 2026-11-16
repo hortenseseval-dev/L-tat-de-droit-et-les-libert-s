@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Révisions État de droit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Domine:wght@500;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Même univers que les diaporamas de la classe : bleu nuit, papier, orange. Layout : une carte de parcours, puis une vue par étape. */
+  --ink:#1F2A44; --paper:#F6F3EC; --card:#FFFDF8; --line:#E3DED2; --muted:#5A6378;
+  --accent:#E9823A; --accent-ink:#A84A12; --blue:#2F5D9E;
+  --ok:#2E7D4F; --ok-bg:#E6F2EA; --ko:#B42318; --ko-bg:#FBEAE8;
+  --lv-na:#B42318; --lv-fr:#9A6A00; --lv-ac:#2E7D4F; --lv-de:#2F5D9E;
+  --display:'Domine', Georgia, serif; --body:'Nunito Sans', 'Segoe UI', Arial, sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.5}
+button,input,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0;text-wrap:balance}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header.top{background:var(--ink);color:var(--paper)}
+header.top .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding-top:18px;padding-bottom:18px}
+.brand small{display:block;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#F2A65A}
+.brand h1{font-size:26px;color:var(--paper)}
+.who{display:flex;gap:8px;align-items:center;font-size:15px;color:#D9DEE8}
+.who b{color:var(--paper)}
+.linkbtn{background:none;border:none;color:#F2A65A;font-weight:700;cursor:pointer;padding:4px;text-decoration:underline}
+main{padding:28px 0 60px}
+.eyebrow{font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent-ink)}
+.lead{color:var(--muted);max-width:62ch}
+.btn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-weight:800;padding:12px 20px;border-radius:12px;cursor:pointer;min-height:48px}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn.orange{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+/* Parcours */
+.path{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.step{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left;border-left:10px solid var(--blue)}
+.step:hover{border-color:var(--ink);border-left-color:var(--blue)}
+.step .num{font-size:14px;font-weight:800;color:var(--blue);letter-spacing:1px;text-transform:uppercase}
+.step h3{font-size:22px}
+.step p{margin:0;color:var(--muted);font-size:16px}
+.step.eval{border-left-color:var(--accent);background:#FFF6EE}
+.step.eval .num{color:var(--accent-ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;font-weight:800;padding:3px 10px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+.chip.done{background:var(--ok-bg);border-color:#BFDCC8;color:var(--ok)}
+/* Capsule */
+.back{margin-bottom:16px}
+.capsule-head{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.capsule-head h2{font-size:32px}
+.tabs{display:flex;gap:8px;margin:12px 0 20px;flex-wrap:wrap}
+.tab{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:8px 16px;font-weight:800;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:24px}
+.slide h3{font-size:24px;margin-bottom:10px}
+.slide p{margin:0 0 10px;max-width:65ch}
+.slide ul{margin:0 0 10px;padding-left:22px}
+.slide li{margin-bottom:6px}
+.key{background:#FDE7D3;padding:0 4px;border-radius:4px;font-weight:700}
+.retiens{margin-top:14px;border-left:6px solid var(--accent);background:#FFF6EE;padding:12px 16px;border-radius:8px;font-weight:700}
+.slidenav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}
+.dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--ink)}
+.listen{background:none;border:2px solid var(--line);border-radius:10px;padding:6px 12px;cursor:pointer;font-weight:700;font-size:15px}
+/* Exercices */
+.ex{display:flex;flex-direction:column;gap:14px}
+.ex + .ex{margin-top:28px;padding-top:24px;border-top:2px dashed var(--line)}
+.ex h3{font-size:20px}
+.consigne{margin:0;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left}
+.opt input{margin-top:5px;width:20px;height:20px;flex:none;accent-color:var(--ink)}
+.opt.sel{border-color:var(--ink);background:#EEF1F7}
+.items{display:flex;flex-direction:column;gap:10px}
+.item{background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.item .txt{font-weight:600}
+.buckets{display:flex;flex-wrap:wrap;gap:8px}
+.bucket{border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px;font-weight:800;cursor:pointer;font-size:16px;min-height:44px}
+.bucket[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.order{display:flex;flex-direction:column;gap:8px;list-style:none;margin:0;padding:0}
+.order li{display:flex;gap:10px;align-items:center;background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:10px 12px}
+.order .rank{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-weight:800;flex:none}
+.order .lbl{flex:1;font-weight:600}
+.mv{border:2px solid var(--line);background:var(--card);border-radius:8px;width:44px;height:40px;cursor:pointer;font-weight:800}
+.good{border-color:var(--ok)!important;background:var(--ok-bg)!important}
+.bad{border-color:var(--ko)!important;background:var(--ko-bg)!important}
+.feedback{padding:12px 16px;border-radius:10px;font-weight:600}
+.feedback.ok{background:var(--ok-bg);color:#1E5C38}
+.feedback.ko{background:var(--ko-bg);color:#8A1A12}
+.why{color:var(--muted);font-size:15px;font-weight:600}
+.casebox{background:#EEF1F7;border-left:6px solid var(--blue);padding:14px 18px;border-radius:8px;font-weight:600}
+/* Évaluation */
+.progress{height:10px;background:var(--line);border-radius:999px;overflow:hidden;margin:6px 0 20px}
+.progress span{display:block;height:100%;background:var(--accent)}
+.comp-tag{font-size:13px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:1px}
+.result{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px}
+.bignote{font-family:var(--display);font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
+.lvl{display:inline-block;font-weight:800;font-size:14px;padding:4px 12px;border-radius:999px;color:#fff}
+.lvl.na{background:var(--lv-na)} .lvl.fr{background:var(--lv-fr)} .lvl.ac{background:var(--lv-ac)} .lvl.de{background:var(--lv-de)}
+.complist{display:flex;flex-direction:column;gap:12px}
+.complist div{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.codebox{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:16px;background:var(--ink);color:var(--paper);padding:14px 16px;border-radius:10px;word-break:break-all;user-select:all}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:800}
+.field input,.field textarea{border:2px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}
+.field textarea{min-height:160px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
+.modal{position:fixed;inset:0;background:rgba(31,42,68,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal .card{max-width:480px;width:100%;display:flex;flex-direction:column;gap:14px}
+/* Prof */
+.tablewrap{overflow-x:auto;margin-top:16px;border:2px solid var(--line);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{background:var(--paper);font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:14px}
+.stat h4{margin:0 0 8px;font-size:15px}
+.bar{display:flex;height:14px;border-radius:999px;overflow:hidden;background:var(--line)}
+.bar span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px;color:var(--muted);margin-top:8px}
+.note-small{font-size:14px;color:var(--muted)}
+footer{border-top:2px solid var(--line);padding:18px 0 40px;color:var(--muted);font-size:14px}
+@media (prefers-reduced-motion: no-preference){.step,.btn,.opt,.bucket{transition:border-color .15s, background .15s}}
+@media (max-width:480px){body{font-size:17px}.brand h1{font-size:21px}.capsule-head h2{font-size:26px}.card{padding:18px}.bignote{font-size:52px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><small>EMC · 4e · Thème 1</small><h1>L’État de droit et les libertés</h1></div>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+<main><div class="wrap" id="app"></div></main>
+<footer><div class="wrap row" style="justify-content:space-between">
+  <span>Révisions avant l’évaluation · capsules de cours, entraînements, évaluation</span>
+  <a href="#prof" style="color:var(--muted)">Espace enseignant</a>
+</div></footer>
+<div id="modal"></div>
+
+<script src="config.js"></script>
+<script>
+/* ---------- Stockage local (confort, peut être absent) ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('emc4t1:'+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('emc4t1:'+k, JSON.stringify(v)); }catch(e){} }
+};
+let profile = store.get('profile', null);
+let progress = store.get('progress', {});
+
+/* ---------- Contenu ---------- */
+const CAPSULES = [
+ { id:'c1', title:'Nos libertés et leurs limites', sub:'Libertés individuelles et collectives, ordre public, affaire du « lancer de nain »',
+   slides:[
+    {t:'Des libertés pour chacun et à plusieurs', html:`<p>Une <span class="key">liberté</span>, c’est pouvoir agir, penser ou s’exprimer sans être empêché.</p><ul><li><b>Liberté individuelle</b> : elle concerne une personne seule. Circuler, choisir sa religion, se marier, donner son avis.</li><li><b>Liberté collective</b> : elle s’exerce à plusieurs. Se réunir, manifester, créer une association, faire grève.</li></ul>`, r:'Individuelle = seul. Collective = à plusieurs.'},
+    {t:'Ma liberté a des limites', html:`<p>La Déclaration des droits de l’homme et du citoyen de 1789 (article 4) dit que la liberté, c’est pouvoir faire tout ce qui ne nuit pas aux autres.</p><p>La <span class="key">loi</span> fixe ces limites, pour que chacun puisse vivre librement à côté des autres.</p>`, r:'Ma liberté s’arrête là où commence celle des autres.'},
+    {t:'L’ordre public', html:`<p>L’État doit protéger l’<span class="key">ordre public</span> pour que chacun vive en paix. Il a 4 composantes :</p><ul><li><b>la sécurité</b> : éviter les dangers ;</li><li><b>la tranquillité</b> : le calme, contre le bruit ;</li><li><b>la salubrité</b> : l’hygiène et la santé ;</li><li><b>la dignité</b> de la personne : on ne traite pas un être humain comme un objet.</li></ul><p>Ce sont souvent le maire ou le préfet qui prennent les mesures.</p>`, r:'Sécurité, tranquillité, salubrité, dignité.'},
+    {t:'L’affaire du « lancer de nain »', html:`<p>En 1991, un maire interdit un spectacle où des clients lançaient une personne de petite taille. La personne conteste : c’est son travail et elle est d’accord.</p><p>En 1995, le Conseil d’État donne raison au maire : le spectacle porte atteinte à la <span class="key">dignité</span> de la personne humaine, qui fait partie de l’ordre public.</p>`, r:'On peut interdire ce qui ne respecte pas la dignité, même si la personne est d’accord.'}
+   ],
+   exercises:[
+    {type:'sort', title:'Individuelle ou collective ?', consigne:'Pour chaque liberté, choisis la bonne réponse.', buckets:['Individuelle','Collective'],
+     items:[['Choisir sa religion',0],['Manifester',1],['Se marier',0],['Faire grève',1],['Circuler librement',0],['Créer une association',1]],
+     why:'Une liberté collective a besoin de plusieurs personnes pour exister.'},
+    {type:'sort', title:'Quelle composante de l’ordre public ?', consigne:'Relie chaque règle à ce qu’elle protège.', buckets:['Sécurité','Tranquillité','Salubrité','Dignité'],
+     items:[['Interdiction de faire du bruit la nuit',1],['Limitation de vitesse devant l’école',0],['Ramassage des poubelles',2],['Interdiction du « lancer de nain »',3]],
+     why:'Bruit → tranquillité ; danger → sécurité ; hygiène → salubrité ; traiter quelqu’un comme un objet → dignité.'},
+    {type:'mcq', title:'Pourquoi le spectacle a-t-il été interdit ?', consigne:'Choisis la bonne réponse.',
+     opts:['Parce que le spectacle faisait trop de bruit','Parce qu’il ne respectait pas la dignité de la personne','Parce que la personne n’était pas d’accord','Parce que le maire n’aimait pas ce spectacle'], ok:1,
+     why:'La personne était d’accord. Le juge a quand même dit oui à l’interdiction, au nom de la dignité.'}
+   ]},
+ { id:'c2', title:'L’État de droit : la loi et la justice', sub:'Personne au-dessus de la loi, pyramide des normes, justice indépendante',
+   slides:[
+    {t:'Un État de droit', html:`<p>Dans un <span class="key">État de droit</span>, tout le monde doit respecter la loi, même l’État.</p><p>Les décisions de l’État peuvent être contestées devant un juge, et annulées si elles ne respectent pas le droit. Cela protège les citoyens contre l’abus de pouvoir.</p>`, r:'Personne n’est au-dessus de la loi, pas même l’État.'},
+    {t:'La suite de l’affaire', html:`<ol><li>1991 : le maire interdit le spectacle.</li><li>La personne conteste la décision.</li><li>Le tribunal administratif annule d’abord l’interdiction.</li><li>1995 : le Conseil d’État donne raison au maire. Il a le dernier mot.</li></ol><p>Même la décision d’un maire peut être jugée.</p>`, r:'Une décision de l’État peut être contrôlée par la justice.'},
+    {t:'La pyramide des normes', html:`<p>Les règles sont classées, de la plus forte à la plus faible :</p><ol><li><b>La Constitution</b></li><li><b>Les traités internationaux</b> (par exemple la Convention européenne des droits de l’homme)</li><li><b>Les lois</b>, votées par le Parlement</li><li><b>Les décisions locales</b>, comme un arrêté du maire</li></ol><p>Chaque règle doit respecter celles qui sont au-dessus. Le Conseil constitutionnel vérifie que les lois respectent la Constitution.</p>`, r:'La Constitution est au sommet.'},
+    {t:'Une justice indépendante', html:`<ul><li><b>Indépendance</b> : la justice n’obéit pas au pouvoir politique.</li><li><b>Gratuité</b> : on ne paie pas le juge.</li><li><b>Publicité</b> : les audiences sont publiques.</li><li><b>Appel</b> : si on n’est pas d’accord avec un jugement, un autre juge réexamine l’affaire.</li></ul><p>Un mineur est jugé par le <span class="key">juge des enfants</span>, qui protège et éduque avant de punir.</p>`, r:'On peut faire appel d’un jugement.'}
+   ],
+   exercises:[
+    {type:'order', title:'Remets l’affaire dans l’ordre', consigne:'Utilise les flèches pour classer les étapes, de la première à la dernière.',
+     items:['Le maire interdit le spectacle','La personne conteste la décision','Le tribunal administratif annule l’interdiction','Le Conseil d’État donne raison au maire'],
+     why:'C’est le Conseil d’État, la plus haute juridiction administrative, qui a le dernier mot.'},
+    {type:'order', title:'Construis la pyramide des normes', consigne:'Classe les règles de la plus forte (en haut) à la plus faible (en bas).',
+     items:['La Constitution','Les traités internationaux','Les lois','L’arrêté du maire'],
+     why:'Chaque règle doit respecter celles qui sont au-dessus d’elle.'},
+    {type:'sort', title:'Vrai ou faux ?', consigne:'Lis chaque phrase et choisis.', buckets:['Vrai','Faux'],
+     items:[['Le maire est au-dessus de la loi.',1],['On peut faire appel d’un jugement.',0],['La justice obéit au gouvernement.',1],['Un mineur est jugé par un juge des enfants.',0]],
+     why:'Dans un État de droit, la justice est indépendante et personne n’est au-dessus de la loi.'}
+   ]},
+ { id:'c3', title:'Liberté de conscience et dérives sectaires', sub:'Laïcité, la loi regarde ce qu’on fait aux personnes, signes d’emprise',
+   slides:[
+    {t:'La liberté de conscience', html:`<p>En France, chacun est libre de croire en une religion, d’en changer, ou de ne pas croire du tout : c’est la <span class="key">liberté de conscience</span>.</p><p>Elle est écrite dans la Déclaration de 1789 et dans la Déclaration universelle des droits de l’homme de 1948.</p>`, r:'Croire ou ne pas croire : les deux sont protégés.'},
+    {t:'La laïcité', html:`<p>La loi du <b>9 décembre 1905</b> sépare les religions et l’État : c’est la <span class="key">laïcité</span>.</p><p>L’État n’interdit aucune religion et n’en favorise aucune. Il garantit à chacun la liberté de croire ou de ne pas croire, dans le respect de l’ordre public.</p>`, r:'Laïcité = loi de 1905.'},
+    {t:'Les dérives sectaires', html:`<p>La loi ne donne pas de liste des « sectes » : on a le droit de croire ce qu’on veut. Elle punit les <span class="key">dérives sectaires</span> : quand un groupe manipule une personne, la met sous emprise et lui fait du mal.</p><p>Les 4 signes d’emprise :</p><ul><li><b>Isolement</b> : on la coupe de sa famille et de ses amis.</li><li><b>Argent</b> : on lui prend son salaire.</li><li><b>Temps</b> : on contrôle ses journées, son téléphone.</li><li><b>Santé</b> : on l’empêche de se soigner.</li></ul>`, r:'La loi ne regarde pas ce que tu crois. Elle regarde ce qu’on te fait.'},
+    {t:'Qui protège ? Qui peut être piégé ?', html:`<p>La <span class="key">Miviludes</span>, une mission de l’État créée en 2002, surveille les dérives sectaires et protège les victimes.</p><p><b>N’importe qui</b> peut être manipulé : la manipulation profite de la confiance, d’un moment difficile ou de l’envie d’appartenir à un groupe. Cela peut aussi passer par Internet, sans aucune religion.</p>`, r:'Ce ne sont pas « seulement les gens faibles » qui se font piéger.'}
+   ],
+   exercises:[
+    {type:'sort', title:'Croyance libre ou dérive ?', consigne:'Pour chaque situation, choisis.', buckets:['Libre','Dérive'],
+     items:[['Léa va chaque semaine à son lieu de culte avec sa famille.',0],['Un groupe dit à Hugo de ne plus voir ses parents.',1],['Malik ne croit en aucun dieu.',0],['Un chef demande à chaque membre tout son salaire.',1],['Sofia, 25 ans, change de religion. Ses parents ne sont pas contents.',0],['Un influenceur exige des vidéos de Théo chaque nuit et lui interdit de voir ses amis.',1]],
+     why:'Tant que personne n’est manipulé ni mis sous emprise, croire est une liberté.'},
+    {type:'sort', title:'Quel signe d’emprise ?', consigne:'Relie chaque exemple au signe d’emprise.', buckets:['Isolement','Argent','Temps','Santé'],
+     items:[['« Arrête ton traitement, n’écoute pas le médecin. »',3],['« Ta vraie famille, c’est nous. »',0],['« Donne-nous tes économies. »',1],['« Tu dois être connecté toute la nuit. »',2]],
+     why:'Les 4 signes d’emprise : isolement, argent, temps, santé.'},
+    {type:'mcq', title:'Démonte l’intox', consigne:'« Seuls les gens faibles se font piéger. » Que réponds-tu ?',
+     opts:['Vrai, les autres ne risquent rien','Faux, n’importe qui peut être manipulé','Vrai, mais seulement pour les adultes'], ok:1,
+     why:'La manipulation profite de la confiance, d’un moment difficile ou de l’envie d’appartenir à un groupe.'}
+   ]},
+ { id:'c4', title:'Synthèse : garanties et limites', sub:'Répondre à la question du thème',
+   slides:[
+    {t:'La question du thème', html:`<p class="casebox">Comment nos libertés sont-elles à la fois garanties et limitées dans un État de droit ?</p><p><b>Garantir</b> = protéger, assurer. <b>Limiter</b> = fixer une frontière.</p>`, r:'Il faut répondre aux deux : garanties ET limitées.'},
+    {t:'Ce qui garantit, ce qui limite', html:`<ul><li><b>Garantissent</b> nos libertés : la Déclaration de 1789 et la Constitution, une justice indépendante (on peut faire appel), la laïcité.</li><li><b>Limitent</b> nos libertés : la liberté des autres, l’ordre public (sécurité, tranquillité, salubrité, dignité), la punition des dérives sectaires.</li></ul>`, r:'La même loi peut limiter l’un pour protéger l’autre.'},
+    {t:'La réponse en une phrase', html:`<p>Dans un État de droit, nos libertés sont <span class="key">garanties</span> par la loi, la Constitution et la justice, et <span class="key">limitées</span> pour protéger les autres et l’ordre public.</p>`, r:'C’est la phrase à savoir pour l’évaluation.'}
+   ],
+   exercises:[
+    {type:'sort', title:'Garantit, limite ou les deux ?', consigne:'Pour chaque règle, choisis.', buckets:['Garantit','Limite','Les deux'],
+     items:[['Tu peux faire appel d’un jugement.',0],['Le maire interdit la musique forte après 22 h.',1],['Insulter quelqu’un sur les réseaux est puni.',2],['Tu as le droit de croire en une religion, ou en aucune.',0],['Tu peux manifester, mais la manifestation peut être interdite si elle est dangereuse.',2]],
+     why:'Une règle qui limite la liberté de l’un sert souvent à protéger celle de l’autre.'},
+    {type:'mcq', title:'La bonne réponse au thème', consigne:'Quelle phrase répond le mieux à la question du thème ?',
+     opts:['Nos libertés n’ont aucune limite en France.','Nos libertés sont garanties par la loi et la justice, et limitées pour protéger les autres et l’ordre public.','L’État décide seul de nos libertés, sans contrôle.'], ok:1,
+     why:'Il faut dire les deux : ce qui garantit et ce qui limite.'}
+   ]}
+];
+
+const COMPS = [
+ {id:'C1', name:'Connaître le vocabulaire du thème', max:8},
+ {id:'C2', name:'Relier une situation à une notion', max:7},
+ {id:'C3', name:'Analyser un cas et justifier', max:5}
+];
+const LEVELS = [
+ {k:'na', label:'Non acquis', min:0},
+ {k:'fr', label:'Fragile', min:40},
+ {k:'ac', label:'Acquis', min:65},
+ {k:'de', label:'Dépassé', min:90}
+];
+function levelOf(pts, max){ const p = max ? pts*100/max : 0; let l = LEVELS[0]; for(const x of LEVELS){ if(p >= x.min) l = x; } return l; }
+
+const EVAL = [
+ {c:'C1', pts:1, type:'mcq', title:'Qu’est-ce qu’un État de droit ?', opts:['Un État où le président fait les lois seul','Une société où tout le monde, même l’État, doit respecter la loi','Un pays sans aucune loi','Un État où seuls les juges ont des droits'], ok:1},
+ {c:'C1', pts:2, type:'multi', title:'Coche les 4 composantes de l’ordre public.', opts:['La sécurité','La richesse','La tranquillité','La salubrité','La célébrité','La dignité de la personne'], ok:[0,2,3,5]},
+ {c:'C1', pts:1, type:'mcq', title:'En quelle année la loi sur la laïcité a-t-elle été votée ?', opts:['1789','1905','1948','2002'], ok:1},
+ {c:'C1', pts:2, type:'order', title:'Classe les règles de la plus forte (en haut) à la plus faible (en bas).', items:['La Constitution','Les traités internationaux','Les lois','L’arrêté du maire']},
+ {c:'C1', pts:1, type:'mcq', title:'Qu’est-ce que la liberté de conscience ?', opts:['Le droit de dire n’importe quoi','La liberté de croire, de changer de religion ou de ne pas croire','L’obligation de choisir une religion','Le droit de ne pas aller à l’école'], ok:1},
+ {c:'C1', pts:1, type:'mcq', title:'À quoi sert la Miviludes ?', opts:['À organiser les élections','À juger les mineurs','À surveiller les dérives sectaires et protéger les victimes','À voter les lois'], ok:2},
+ {c:'C2', pts:3, type:'sort', title:'Individuelle ou collective ?', buckets:['Individuelle','Collective'], items:[['Donner son avis',0],['Se réunir dans une salle avec d’autres',1],['Voyager à l’étranger',0],['Faire grève',1],['Changer de religion',0],['Publier un journal avec une équipe',1]]},
+ {c:'C2', pts:2, type:'sort', title:'Quelle composante de l’ordre public la règle protège-t-elle ?', buckets:['Sécurité','Tranquillité','Salubrité','Dignité'], items:[['Une fête foraine doit s’arrêter à minuit à cause du bruit.',1],['Il est interdit de jeter ses déchets dans la rivière.',2],['Un vieux pont qui risque de s’écrouler est fermé.',0],['Un jeu où l’on paie pour humilier une personne est interdit.',3]]},
+ {c:'C2', pts:2, type:'sort', title:'Croyance libre ou dérive sectaire ?', buckets:['Libre','Dérive'], items:[['Nina prie avant chaque repas.',0],['Un « coach » oblige Yanis à couper son téléphone avec sa famille.',1],['Tom décide de ne plus croire en Dieu.',0],['Un groupe interdit à Lou de voir un médecin.',1]]},
+ {c:'C3', pts:1, type:'mcq', case:true, title:'Quelle liberté est limitée par la décision du maire ?', opts:['Une liberté individuelle : circuler','Une liberté collective : se réunir','La liberté de conscience','Aucune liberté'], ok:1},
+ {c:'C3', pts:1, type:'mcq', case:true, title:'Que peut faire l’association ?', opts:['Rien, c’est le maire qui décide','Contester la décision devant un tribunal','Organiser la fête quand même','Demander à la police d’annuler la décision'], ok:1},
+ {c:'C3', pts:1.5, type:'mcq', case:true, title:'Pourquoi est-ce possible ?', opts:['Parce que l’association est plus importante que le maire','Parce que la France est un État de droit : même le maire doit respecter la loi, et un juge peut contrôler sa décision','Parce que le maire n’a pas le droit de prendre des décisions','Parce que les fêtes sont toujours autorisées'], ok:1},
+ {c:'C3', pts:1.5, type:'mcq', case:true, title:'Le tribunal donne tort à l’association. Que peut-elle encore faire ?', opts:['Faire appel : un autre juge réexamine l’affaire','Changer de maire','Rien du tout','Écrire une nouvelle loi'], ok:0}
+];
+const CASE_TEXT = 'Le maire d’une ville interdit pendant un mois tous les rassemblements sur la place principale, sans donner de raison. Une association qui voulait y organiser une fête de quartier trouve cette décision injuste.';
+
+/* ---------- Outils ---------- */
+const $app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function shuffle(a){ a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function fmt(n){ return (Math.round(n*2)/2).toLocaleString('fr-FR'); }
+const canSpeak = (()=>{ try{ return 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function'; }catch(e){ return false; } })();
+function speak(text){ try{ speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang='fr-FR'; u.rate=.95; speechSynthesis.speak(u); }catch(e){} }
+function textOf(html){ const d=document.createElement('div'); d.innerHTML=html; return d.textContent.replace(/\s+/g,' ').trim(); }
+
+/* ---------- Moteur d’exercices ---------- */
+// state: mcq -> index ; multi -> Set ; sort -> {i:bucket} ; order -> array of original indices
+function initState(ex){
+  if(ex.type==='mcq') return {v:null, order: shuffle(ex.opts.map((_,i)=>i))};
+  if(ex.type==='multi') return {v:new Set(), order: shuffle(ex.opts.map((_,i)=>i))};
+  if(ex.type==='sort') return {v:{}, order: shuffle(ex.items.map((_,i)=>i))};
+  if(ex.type==='order'){ let o; do{ o = shuffle(ex.items.map((_,i)=>i)); } while(o.every((x,i)=>x===i)); return {v:o}; }
+}
+function isComplete(ex, st){
+  if(ex.type==='mcq') return st.v!==null;
+  if(ex.type==='multi') return st.v.size>0;
+  if(ex.type==='sort') return Object.keys(st.v).length===ex.items.length;
+  return true;
+}
+function scoreOf(ex, st, max){
+  if(ex.type==='mcq') return st.v===ex.ok ? max : 0;
+  if(ex.type==='multi'){ const per = max/ex.ok.length; let s=0; st.v.forEach(i=>{ s += ex.ok.includes(i) ? per : -per; }); return Math.max(0, Math.min(max, s)); }
+  if(ex.type==='sort'){ const per = max/ex.items.length; let s=0; ex.items.forEach((it,i)=>{ if(st.v[i]===it[1]) s+=per; }); return s; }
+  if(ex.type==='order'){ const good = st.v.filter((x,i)=>x===i).length; return good===ex.items.length ? max : (good>=ex.items.length-2 ? max/2 : 0); }
+}
+function renderEx(ex, st, box, opts){
+  // opts: {reveal:bool, onChange:fn}
+  const reveal = opts.reveal; box.innerHTML='';
+  if(ex.type==='mcq' || ex.type==='multi'){
+    const wrap = document.createElement('div'); wrap.className='opts';
+    st.order.forEach(i=>{
+      const lab = document.createElement('label'); lab.className='opt';
+      const inp = document.createElement('input'); inp.type = ex.type==='mcq' ? 'radio' : 'checkbox';
+      inp.name = 'q'+Math.random().toString(36).slice(2,6); inp.disabled = reveal;
+      const sel = ex.type==='mcq' ? st.v===i : st.v.has(i); inp.checked = sel; if(sel) lab.classList.add('sel');
+      if(reveal){ const right = ex.type==='mcq' ? i===ex.ok : ex.ok.includes(i); if(right) lab.classList.add('good'); else if(sel) lab.classList.add('bad'); }
+      inp.addEventListener('change',()=>{ if(ex.type==='mcq') st.v=i; else { inp.checked ? st.v.add(i) : st.v.delete(i); } opts.onChange && opts.onChange(); renderEx(ex, st, box, opts); });
+      const sp = document.createElement('span'); sp.textContent = ex.opts[i];
+      lab.append(inp, sp); wrap.append(lab);
+    });
+    box.append(wrap);
+  } else if(ex.type==='sort'){
+    const wrap = document.createElement('div'); wrap.className='items';
+    st.order.forEach(i=>{
+      const [txt, good] = ex.items[i];
+      const it = document.createElement('div'); it.className='item';
+      if(reveal){ it.classList.add(st.v[i]===good ? 'good':'bad'); }
+      const t = document.createElement('div'); t.className='txt'; t.textContent = txt; it.append(t);
+      const bs = document.createElement('div'); bs.className='buckets'; bs.setAttribute('role','group'); bs.setAttribute('aria-label', txt);
+      ex.buckets.forEach((b,bi)=>{
+        const btn = document.createElement('button'); btn.type='button'; btn.className='bucket'; btn.textContent=b;
+        btn.setAttribute('aria-pressed', st.v[i]===bi ? 'true':'false'); btn.disabled = reveal;
+        btn.addEventListener('click',()=>{ st.v[i]=bi; opts.onChange && opts.onChange(); renderEx(ex, st, box, opts); });
+        bs.append(btn);
+      });
+      it.append(bs);
+      if(reveal && st.v[i]!==good){ const w=document.createElement('div'); w.className='why'; w.textContent='Bonne réponse : '+ex.buckets[good]; it.append(w); }
+      wrap.append(it);
+    });
+    box.append(wrap);
+  } else if(ex.type==='order'){
+    const ol = document.createElement('ol'); ol.className='order';
+    st.v.forEach((orig,pos)=>{
+      const li = document.createElement('li'); if(reveal) li.classList.add(orig===pos?'good':'bad');
+      const r = document.createElement('span'); r.className='rank'; r.textContent=pos+1;
+      const l = document.createElement('span'); l.className='lbl'; l.textContent=ex.items[orig];
+      li.append(r,l);
+      if(!reveal){
+        [['▲',-1,'Monter'],['▼',1,'Descendre']].forEach(([s,d,a])=>{
+          const b=document.createElement('button'); b.type='button'; b.className='mv'; b.textContent=s; b.setAttribute('aria-label', a+' : '+ex.items[orig]);
+          const to = pos+d; b.disabled = to<0 || to>=st.v.length;
+          b.addEventListener('click',()=>{ [st.v[pos],st.v[to]]=[st.v[to],st.v[pos]]; opts.onChange && opts.onChange(); renderEx(ex, st, box, opts); });
+          li.append(b);
+        });
+      }
+      ol.append(li);
+    });
+    box.append(ol);
+    if(reveal && !st.v.every((x,i)=>x===i)){ const w=document.createElement('div'); w.className='why'; w.textContent='Le bon ordre : '+ex.items.map((t,i)=>(i+1)+'. '+t).join(' · '); box.append(w); }
+  }
+}
+
+/* ---------- Vues ---------- */
+function renderWho(){
+  const w = document.getElementById('who'); w.innerHTML='';
+  if(profile){ const s=document.createElement('span'); s.innerHTML='Élève : <b></b>'; s.querySelector('b').textContent = profile.name+' · '+profile.classe; w.append(s);
+    const b=document.createElement('button'); b.className='linkbtn'; b.textContent='Changer'; b.onclick=()=>askName(()=>route()); w.append(b);
+  } else { const b=document.createElement('button'); b.className='linkbtn'; b.textContent='Écrire mon prénom'; b.onclick=()=>askName(()=>route()); w.append(b); }
+}
+function askName(then){
+  const m = document.getElementById('modal');
+  m.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt"><form class="card" id="nf">
+    <h2 id="mt" style="font-size:24px">Qui révise ?</h2>
+    <p class="note-small" style="margin:0">Ton prénom et l’initiale de ton nom apparaîtront dans ton code de résultat.</p>
+    <div class="field"><label for="fn">Prénom et initiale du nom</label><input id="fn" required maxlength="30" placeholder="Exemple : Inès B."></div>
+    <div class="field"><label for="fc">Classe</label><input id="fc" required maxlength="10" value="4eA"></div>
+    <div class="row"><button class="btn" type="submit">Valider</button><button class="btn alt" type="button" id="nc">Annuler</button></div>
+  </form></div>`;
+  if(profile){ m.querySelector('#fn').value = profile.name; m.querySelector('#fc').value = profile.classe; }
+  m.querySelector('#fn').focus();
+  m.querySelector('#nc').onclick=()=>{ m.innerHTML=''; };
+  m.querySelector('#nf').addEventListener('submit', e=>{ e.preventDefault();
+    const n = m.querySelector('#fn').value.trim().replace(/[~|]/g,''); const c = m.querySelector('#fc').value.trim().replace(/[~|]/g,'');
+    if(!n || !c) return; profile={name:n, classe:c}; store.set('profile', profile); m.innerHTML=''; renderWho(); then && then(); });
+}
+
+function viewHome(){
+  const done = id => progress[id] || {};
+  $app.innerHTML = `
+    <div class="eyebrow">Avant l’évaluation</div>
+    <h2 style="font-size:32px;margin:6px 0 8px">Ton parcours de révision</h2>
+    <p class="lead">Lis chaque capsule de cours, entraîne-toi jusqu’à tout réussir, puis passe l’évaluation. À la fin, tu obtiens ta note indicative et un code à envoyer à ta professeure.</p>
+    <div class="path" id="path"></div>`;
+  const path = document.getElementById('path');
+  CAPSULES.forEach((c,i)=>{
+    const d = done(c.id); const b = document.createElement('button'); b.className='step'; b.type='button';
+    const tr = d.train ? `${d.train.best}/${d.train.total}` : null;
+    b.innerHTML = `<span class="num">Capsule ${i+1}</span><h3>${c.title}</h3><p>${c.sub}</p>
+      <span class="chips"><span class="chip ${d.read?'done':''}">${d.read?'Cours lu':'Cours à lire'}</span><span class="chip ${d.train && d.train.best===d.train.total?'done':''}">${tr?'Entraînement : '+tr+' réussis':'Entraînement à faire'}</span></span>`;
+    b.onclick=()=>{ state.view={name:'capsule', id:c.id, tab:'cours', slide:0}; render(); };
+    path.append(b);
+  });
+  const e = document.createElement('button'); e.className='step eval'; e.type='button';
+  const att = store.get('attempts',0);
+  e.innerHTML = `<span class="num">Étape finale</span><h3>L’évaluation</h3><p>${EVAL.length} questions, 20 points, 3 compétences. Pas de correction pendant l’évaluation : tu la vois à la fin.</p><span class="chips"><span class="chip ${att?'done':''}">${att?'Déjà passée '+att+' fois':'Pas encore passée'}</span></span>`;
+  e.onclick=()=>{ if(!profile){ askName(()=>{ state.view={name:'eval'}; render(); }); } else { state.view={name:'eval'}; render(); } };
+  path.append(e);
+}
+
+function viewCapsule(){
+  const v = state.view; const c = CAPSULES.find(x=>x.id===v.id); const idx = CAPSULES.indexOf(c);
+  $app.innerHTML = `<button class="btn alt back" id="bk">← Retour au parcours</button>
+    <div class="capsule-head"><span class="eyebrow">Capsule ${idx+1} sur ${CAPSULES.length}</span><h2>${c.title}</h2></div>
+    <div class="tabs" role="tablist"><button class="tab" role="tab" data-t="cours" aria-selected="${v.tab==='cours'}">1. Le cours</button><button class="tab" role="tab" data-t="train" aria-selected="${v.tab==='train'}">2. Je m’entraîne</button></div>
+    <div id="pane"></div>`;
+  document.getElementById('bk').onclick=()=>{ state.view={name:'home'}; render(); };
+  $app.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ v.tab=t.dataset.t; render(); });
+  const pane = document.getElementById('pane');
+  if(v.tab==='cours'){
+    const s = c.slides[v.slide];
+    pane.innerHTML = `<div class="card slide"><div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="eyebrow">Carte ${v.slide+1} sur ${c.slides.length}</span>${canSpeak?'<button class="listen" id="ls" type="button">Écouter la carte</button>':''}</div>
+      <h3>${s.t}</h3>${s.html}<div class="retiens">À retenir : ${s.r}</div>
+      <div class="slidenav"><button class="btn alt" id="pv" ${v.slide===0?'disabled':''}>← Précédente</button>
+      <div class="dots" aria-hidden="true">${c.slides.map((_,i)=>`<span class="dot ${i===v.slide?'on':''}"></span>`).join('')}</div>
+      ${v.slide<c.slides.length-1?'<button class="btn" id="nx">Suivante →</button>':'<button class="btn orange" id="go">Je m’entraîne →</button>'}</div></div>`;
+    if(canSpeak) document.getElementById('ls').onclick=()=>speak(s.t+'. '+textOf(s.html)+' À retenir : '+s.r);
+    document.getElementById('pv').onclick=()=>{ v.slide--; render(); };
+    const nx=document.getElementById('nx'); if(nx) nx.onclick=()=>{ v.slide++; render(); };
+    const go=document.getElementById('go'); if(go) go.onclick=()=>{ progress[c.id]=Object.assign(progress[c.id]||{}, {read:true}); store.set('progress',progress); v.tab='train'; render(); };
+  } else {
+    const card = document.createElement('div'); card.className='card'; pane.append(card);
+    const sts = c.exercises.map(initState); const results = c.exercises.map(()=>null);
+    c.exercises.forEach((ex,i)=>{
+      const sec = document.createElement('section'); sec.className='ex';
+      sec.innerHTML = `<h3>${i+1}. ${ex.title}</h3><p class="consigne">${ex.consigne}</p>`;
+      const box = document.createElement('div'); sec.append(box);
+      const fb = document.createElement('div'); const ctr = document.createElement('div'); ctr.className='row';
+      const check = document.createElement('button'); check.className='btn'; check.textContent='Vérifier';
+      const again = document.createElement('button'); again.className='btn alt'; again.textContent='Recommencer'; again.hidden=true;
+      ctr.append(check, again); sec.append(ctr, fb);
+      const draw = (reveal)=>renderEx(ex, sts[i], box, {reveal, onChange:()=>{ check.disabled = !isComplete(ex, sts[i]); }});
+      draw(false); check.disabled = !isComplete(ex, sts[i]);
+      check.onclick=()=>{
+        const sc = scoreOf(ex, sts[i], 1); const ok = sc>=0.999; results[i]=ok;
+        draw(true); check.hidden=true; again.hidden=false;
+        fb.className='feedback '+(ok?'ok':'ko');
+        fb.innerHTML = (ok?'Bravo, tout est juste. ':'Pas encore. Regarde les réponses en vert, puis recommence. ')+`<div class="why" style="margin-top:6px">${ex.why}</div>`;
+        const best = results.filter(Boolean).length; const prev = (progress[c.id]||{}).train;
+        progress[c.id]=Object.assign(progress[c.id]||{}, {train:{best: Math.max(best, prev?prev.best:0), total:c.exercises.length}}); store.set('progress',progress);
+      };
+      again.onclick=()=>{ sts[i]=initState(ex); results[i]=null; fb.className=''; fb.innerHTML=''; check.hidden=false; again.hidden=true; draw(false); check.disabled=true; };
+      card.append(sec);
+    });
+    const nav = document.createElement('div'); nav.className='row'; nav.style.marginTop='20px';
+    const next = CAPSULES[idx+1];
+    nav.innerHTML = next ? `<button class="btn orange" id="nc">Capsule suivante : ${next.title} →</button>` : `<button class="btn orange" id="ne">Passer à l’évaluation →</button>`;
+    pane.append(nav);
+    const nc=document.getElementById('nc'); if(nc) nc.onclick=()=>{ state.view={name:'capsule', id:next.id, tab:'cours', slide:0}; render(); window.scrollTo(0,0); };
+    const ne=document.getElementById('ne'); if(ne) ne.onclick=()=>{ if(!profile) askName(()=>{ state.view={name:'eval'}; render(); }); else { state.view={name:'eval'}; render(); } };
+  }
+}
+
+function viewEval(){
+  if(!state.ev){ state.ev = {i:0, sts: EVAL.map(initState), done:false}; }
+  const ev = state.ev;
+  if(ev.done) return viewResult();
+  const q = EVAL[ev.i]; const st = ev.sts[ev.i]; const comp = COMPS.find(c=>c.id===q.c);
+  $app.innerHTML = `<button class="btn alt back" id="bk">← Quitter l’évaluation</button>
+    <div class="row" style="justify-content:space-between"><span class="eyebrow">Évaluation · question ${ev.i+1} sur ${EVAL.length}</span><span class="note-small">${fmt(q.pts)} point${q.pts>1?'s':''}</span></div>
+    <div class="progress" aria-hidden="true"><span style="width:${(ev.i)*100/EVAL.length}%"></span></div>
+    <div class="card"><section class="ex"><span class="comp-tag">${comp.name}</span>
+    ${q.case?`<div class="casebox">${CASE_TEXT}</div>`:''}
+    <h3>${q.title}</h3><p class="consigne">${q.type==='multi'?'Plusieurs réponses sont justes.':q.type==='order'?'Utilise les flèches.':q.type==='sort'?'Choisis une réponse pour chaque ligne.':'Une seule réponse est juste.'}</p>
+    <div id="qb"></div>
+    <div class="row" style="justify-content:space-between;margin-top:6px"><button class="btn alt" id="pv" ${ev.i===0?'disabled':''}>← Précédente</button><button class="btn ${ev.i===EVAL.length-1?'orange':''}" id="nx">${ev.i===EVAL.length-1?'Terminer l’évaluation':'Question suivante →'}</button></div>
+    </section></div>`;
+  const nx = document.getElementById('nx');
+  renderEx(q, st, document.getElementById('qb'), {reveal:false, onChange:()=>{ nx.disabled = !isComplete(q, st); }});
+  nx.disabled = !isComplete(q, st);
+  document.getElementById('bk').onclick=()=>confirmBox('Quitter l’évaluation ? Tes réponses seront perdues.', ()=>{ state.ev=null; state.view={name:'home'}; render(); });
+  document.getElementById('pv').onclick=()=>{ ev.i--; render(); };
+  nx.onclick=()=>{
+    if(ev.i<EVAL.length-1){ ev.i++; render(); window.scrollTo(0,0); }
+    else confirmBox('Terminer l’évaluation ? Tu ne pourras plus changer tes réponses.', ()=>{ finishEval(); render(); window.scrollTo(0,0); });
+  };
+}
+function confirmBox(msg, ok){
+  const m = document.getElementById('modal');
+  m.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="card"><p style="margin:0;font-weight:700"></p><div class="row"><button class="btn" id="cy">Oui</button><button class="btn alt" id="cn">Non</button></div></div></div>`;
+  m.querySelector('p').textContent = msg; m.querySelector('#cy').focus();
+  m.querySelector('#cy').onclick=()=>{ m.innerHTML=''; ok(); }; m.querySelector('#cn').onclick=()=>{ m.innerHTML=''; };
+}
+
+/* ---------- Code de résultat ---------- */
+/* ---------- Envoi vers la feuille Google de l’enseignante ---------- */
+const ENDPOINT = ((window.EMC_CONFIG||{}).endpoint||'').trim();
+async function api(body){
+  if(!ENDPOINT) throw new Error('noendpoint');
+  const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), 20000);
+  try{
+    const r = await fetch(ENDPOINT, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(body), signal:ctl.signal});
+    const j = await r.json(); if(!j.ok) throw new Error(j.error||'refus'); return j;
+  } finally { clearTimeout(t); }
+}
+async function sendResult(){
+  const ev = state.ev; if(!ev || !ev.result) return;
+  if(!ENDPOINT){ ev.sent='off'; render(); return; }
+  ev.sent='pending'; render();
+  const r = ev.result;
+  try{
+    await api({action:'submit', name:r.name, classe:r.classe, ts:r.ts, attempt:r.attempt, comp:r.comp, code:ev.code});
+    ev.sent='ok';
+  }catch(e){ ev.sent='error'; }
+  if(state.ev===ev) render();
+}
+
+const SALT = 'emc4-t1-etat-de-droit';
+function hash(s){ let h=2166136261; for(const ch of s){ h ^= ch.codePointAt(0); h = Math.imul(h, 16777619)>>>0; } return h.toString(36).toUpperCase().padStart(7,'0').slice(-5); }
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); }
+function makeCode(r){
+  const payload = ['1', r.name, r.classe, Math.floor(r.ts/60000).toString(36), r.attempt, ...r.comp.map(p=>Math.round(p*2))].join('~');
+  return 'EMC4T1-' + b64e(payload) + '-' + hash(SALT+payload);
+}
+function readCode(code){
+  const m = code.match(/^EMC4T1-([A-Za-z0-9_-]+)-([0-9A-Z]{5})$/); if(!m) return null;
+  let payload; try{ payload = b64d(m[1]); }catch(e){ return {error:'Code illisible'}; }
+  if(hash(SALT+payload)!==m[2]) return {error:'Code modifié ou mal recopié'};
+  const p = payload.split('~'); if(p[0]!=='1' || p.length<8) return {error:'Code illisible'};
+  const comp = p.slice(5,8).map(x=>Number(x)/2);
+  return {name:p[1], classe:p[2], ts:parseInt(p[3],36)*60000, attempt:Number(p[4]), comp, note: comp.reduce((a,b)=>a+b,0)};
+}
+
+function finishEval(){
+  const ev = state.ev; const comp = COMPS.map(c=>0);
+  EVAL.forEach((q,i)=>{ const ci = COMPS.findIndex(c=>c.id===q.c); comp[ci] += scoreOf(q, ev.sts[i], q.pts); });
+  const rounded = comp.map(x=>Math.round(x*2)/2);
+  const attempt = store.get('attempts',0)+1; store.set('attempts', attempt);
+  ev.result = {name:profile.name, classe:profile.classe, ts:Date.now(), attempt, comp:rounded};
+  ev.code = makeCode(ev.result); ev.done = true; ev.review=false;
+  setTimeout(sendResult, 0);
+}
+function viewResult(){
+  const ev = state.ev, r = ev.result; const note = r.comp.reduce((a,b)=>a+b,0);
+  $app.innerHTML = `<div class="eyebrow">Évaluation terminée · essai n° ${r.attempt}</div>
+    <h2 style="font-size:32px;margin:6px 0 4px">Bravo ${esc(r.name)}, voici ton résultat</h2>
+    <p class="lead">C’est une note indicative pour t’aider à réviser. La vraie évaluation se fait en classe.</p>
+    <div class="result">
+      <div class="card"><span class="eyebrow">Note indicative</span><div class="bignote">${fmt(note)}<span style="font-size:28px"> / 20</span></div></div>
+      <div class="card"><span class="eyebrow">Mes compétences</span><div class="complist" style="margin-top:10px">${COMPS.map((c,i)=>{ const l=levelOf(r.comp[i], c.max); return `<div><span>${c.name} <span class="note-small">(${fmt(r.comp[i])} / ${c.max})</span></span><span class="lvl ${l.k}">${l.label}</span></div>`; }).join('')}</div></div>
+    </div>
+    <div class="card" style="margin-top:16px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="font-size:22px">Envoi à ta professeure</h3>
+      <p style="margin:0" class="feedback ${ev.sent==='ok'?'ok':ev.sent==='error'||ev.sent==='off'?'ko':''}" aria-live="polite">${
+        ev.sent==='ok' ? 'C’est envoyé. Ta professeure a reçu ton résultat.' :
+        ev.sent==='pending' ? 'Envoi de ton résultat en cours…' :
+        ev.sent==='off' ? 'L’envoi automatique n’est pas activé. Copie le code ci-dessous et donne-le à ta professeure.' :
+        'L’envoi n’a pas marché. Vérifie ta connexion et réessaie, ou copie le code ci-dessous et donne-le à ta professeure.'}</p>
+      ${ev.sent==='ok'||ev.sent==='pending' ? '' : `<div class="codebox" id="code"></div>
+      <div class="row">${ev.sent==='error'?'<button class="btn orange" id="rt">Réessayer l’envoi</button>':''}<button class="btn" id="cp">Copier le code</button><span id="cpm" class="note-small" aria-live="polite"></span></div>`}
+    </div>
+    <div class="row" style="margin-top:20px"><button class="btn alt" id="rv">${ev.review?'Masquer la correction':'Voir la correction'}</button><button class="btn alt" id="hm">Retour au parcours</button></div>
+    <div id="review"></div>`;
+  const cb = document.getElementById('code'); if(cb) cb.textContent = ev.code;
+  const rt = document.getElementById('rt'); if(rt) rt.onclick = sendResult;
+  const cpb = document.getElementById('cp'); if(cpb) cpb.onclick=async()=>{ const msg=document.getElementById('cpm'); try{ await navigator.clipboard.writeText(ev.code); msg.textContent='Code copié.'; }catch(e){ msg.textContent='Copie impossible : sélectionne le code et copie-le à la main.'; } };
+  document.getElementById('rv').onclick=()=>{ ev.review=!ev.review; render(); };
+  document.getElementById('hm').onclick=()=>{ state.ev=null; state.view={name:'home'}; render(); };
+  if(ev.review){
+    const box = document.getElementById('review'); const card=document.createElement('div'); card.className='card'; card.style.marginTop='16px'; box.append(card);
+    EVAL.forEach((q,i)=>{ const sec=document.createElement('section'); sec.className='ex';
+      const got = scoreOf(q, ev.sts[i], q.pts);
+      sec.innerHTML = `<span class="comp-tag">Question ${i+1} · ${fmt(got)} / ${fmt(q.pts)}</span>${q.case?`<div class="casebox">${CASE_TEXT}</div>`:''}<h3>${q.title}</h3>`;
+      const b=document.createElement('div'); sec.append(b); renderEx(q, ev.sts[i], b, {reveal:true}); card.append(sec); });
+  }
+}
+
+/* ---------- Espace enseignant ---------- */
+const sess = {
+  get(){ try{ return sessionStorage.getItem('emc4t1:tcode')||''; }catch(e){ return state.tcode||''; } },
+  set(v){ state.tcode=v; try{ v ? sessionStorage.setItem('emc4t1:tcode', v) : sessionStorage.removeItem('emc4t1:tcode'); }catch(e){} }
+};
+function backToGame(e){ if(e) e.preventDefault(); history.replaceState(null,'',location.pathname+location.search); state.view={name:'home'}; render(); }
+
+function viewProf(){
+  const code = sess.get();
+  if(!code || !ENDPOINT) return viewLogin();
+  $app.innerHTML = `<a href="#" class="btn alt back" id="bk">← Retour au jeu</a>
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">Espace enseignant</div>
+    <h2 style="font-size:32px;margin:6px 0 8px">Résultats de l’évaluation</h2></div>
+    <div class="row"><button class="btn alt" id="rf">Actualiser</button><button class="btn alt" id="lo">Se déconnecter</button></div></div>
+    <p class="lead">Les résultats arrivent ici dès qu’un élève termine l’évaluation. Seul le dernier essai de chaque élève est compté ; le nombre d’essais est indiqué.</p>
+    <div id="out"><p class="note-small">Chargement des résultats…</p></div>
+    ${manualBlock()}`;
+  document.getElementById('bk').onclick=backToGame;
+  document.getElementById('lo').onclick=()=>{ sess.set(''); render(); };
+  document.getElementById('rf').onclick=()=>load();
+  wireManual(()=>draw());
+  let remote = [];
+  const draw = ()=>renderResults(document.getElementById('out'), remote.concat(manualRows()));
+  async function load(){
+    document.getElementById('out').innerHTML='<p class="note-small">Chargement des résultats…</p>';
+    try{
+      const j = await api({action:'list', code});
+      remote = (j.rows||[]).map(r=>({name:String(r.name), classe:String(r.classe), ts:Number(r.ts), attempt:Number(r.attempt)||1, comp:r.comp.map(Number), note:r.comp.map(Number).reduce((a,b)=>a+b,0)}));
+      draw();
+    }catch(e){
+      if(e.message==='code'){ sess.set(''); return viewLogin('Le code enseignant n’est plus valable.'); }
+      document.getElementById('out').innerHTML = `<p class="feedback ko">Impossible de charger les résultats (${e.message==='locked'?'trop d’essais de code, réessayez dans 10 minutes':'connexion au serveur impossible'}). Cliquez sur Actualiser.</p>`;
+    }
+  }
+  load();
+}
+
+function viewLogin(msg){
+  $app.innerHTML = `<a href="#" class="btn alt back" id="bk">← Retour au jeu</a>
+    <div class="eyebrow">Espace enseignant</div>
+    <h2 style="font-size:32px;margin:6px 0 8px">Accès réservé</h2>
+    ${ENDPOINT ? `<form class="card" id="lf" style="display:flex;flex-direction:column;gap:12px;max-width:460px">
+      <div class="field"><label for="tc">Code enseignant</label><input id="tc" type="password" autocomplete="current-password" required></div>
+      <div class="row"><button class="btn" type="submit" id="lb">Entrer</button></div>
+      <p class="feedback ko" id="lm" ${msg?'':'hidden'}>${msg?esc(msg):''}</p>
+    </form>` : `<p class="feedback ko">L’envoi des résultats n’est pas encore configuré : l’adresse de l’application Google manque dans le fichier config.js. Les codes reçus à la main restent utilisables ci-dessous.</p><div id="out"></div>${manualBlock(true)}`}`;
+  document.getElementById('bk').onclick=backToGame;
+  if(!ENDPOINT){ wireManual(()=>renderResults(document.getElementById('out'), manualRows())); renderResults(document.getElementById('out'), manualRows()); return; }
+  const f = document.getElementById('lf'); document.getElementById('tc').focus();
+  f.addEventListener('submit', async e=>{
+    e.preventDefault(); const v = document.getElementById('tc').value.trim(); const lm = document.getElementById('lm'); const lb = document.getElementById('lb');
+    lb.disabled=true; lm.hidden=true;
+    try{ await api({action:'list', code:v, limit:1}); sess.set(v); render(); }
+    catch(err){ lb.disabled=false; lm.hidden=false;
+      lm.textContent = err.message==='code' ? 'Code incorrect.' : err.message==='locked' ? 'Trop d’essais. Réessayez dans 10 minutes.' : 'Le serveur ne répond pas. Vérifiez la connexion et réessayez.'; }
+  });
+}
+
+/* Codes collés à la main (si un élève n’a pas pu envoyer) : gardés dans ce navigateur seulement */
+function manualRows(){
+  const txt = store.get('profcodes','');
+  const found = txt.match(/EMC4T1-[A-Za-z0-9_-]+-[0-9A-Z]{5}/g) || [];
+  return found.map(readCode).filter(r=>r && !r.error).map(r=>Object.assign(r,{manual:true}));
+}
+function manualBlock(open){
+  return `<details class="card" style="margin-top:20px" ${open?'open':''}><summary style="font-weight:800;cursor:pointer">Ajouter des codes reçus à la main</summary>
+    <p class="note-small">Si un élève n’a pas pu envoyer son résultat, il obtient un code commençant par EMC4T1-. Collez-le ici : il s’ajoute au tableau, dans ce navigateur seulement.</p>
+    <div class="field"><label for="codes">Codes</label><textarea id="codes" placeholder="EMC4T1-…"></textarea></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="an" type="button">Ajouter au tableau</button><button class="btn alt" id="cl" type="button">Effacer ces codes</button><span class="note-small" id="mm" aria-live="polite"></span></div>
+  </details>`;
+}
+function wireManual(redraw){
+  const ta = document.getElementById('codes'); if(!ta) return; ta.value = store.get('profcodes','');
+  document.getElementById('an').onclick=()=>{ store.set('profcodes', ta.value);
+    const all = ta.value.match(/EMC4T1-[A-Za-z0-9_-]+-[0-9A-Z]{5}/g)||[]; const bad = all.filter(c=>{ const r=readCode(c); return !r||r.error; }).length;
+    document.getElementById('mm').textContent = (all.length-bad)+' code(s) ajouté(s)'+(bad?', '+bad+' refusé(s) car modifié(s) ou mal recopié(s)':'')+'.'; redraw(); };
+  document.getElementById('cl').onclick=()=>{ ta.value=''; store.set('profcodes',''); document.getElementById('mm').textContent=''; redraw(); };
+}
+
+function renderResults(out, rows){
+  if(!rows.length){ out.innerHTML = `<p class="note-small" style="margin-top:12px">Aucun résultat pour l’instant.</p>`; return; }
+  const classes = [...new Set(rows.map(r=>r.classe))].sort();
+  const cur = state.classFilter && classes.includes(state.classFilter) ? state.classFilter : '';
+  const byKey = {};
+  rows.filter(r=>!cur || r.classe===cur).forEach(r=>{ const k=(r.name.trim()+'|'+r.classe.trim()).toLowerCase(); (byKey[k]=byKey[k]||[]).push(r); });
+  const last = Object.values(byKey).map(list=>{ list.sort((a,b)=>a.ts-b.ts); const l=list[list.length-1]; l.count=list.length; return l; })
+    .sort((a,b)=>a.classe.localeCompare(b.classe,'fr') || a.name.localeCompare(b.name,'fr'));
+  const d = ts=>new Date(ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  const avg = last.length ? last.reduce((a,r)=>a+r.note,0)/last.length : 0;
+  const counts = COMPS.map((c,i)=>{ const o={na:0,fr:0,ac:0,de:0}; last.forEach(r=>o[levelOf(r.comp[i],c.max).k]++); return o; });
+  const col = {na:'var(--lv-na)',fr:'var(--lv-fr)',ac:'var(--lv-ac)',de:'var(--lv-de)'};
+  out.innerHTML = `
+    ${classes.length>1?`<div class="field" style="max-width:240px;margin-top:8px"><label for="cf">Classe</label><select id="cf" style="font:inherit;border:2px solid var(--line);border-radius:10px;padding:10px;background:var(--card)"><option value="">Toutes les classes</option>${classes.map(c=>`<option ${c===cur?'selected':''}>${esc(c)}</option>`).join('')}</select></div>`:''}
+    <div class="stats">
+      <div class="stat"><h4>Élèves</h4><div class="bignote" style="font-size:40px">${last.length}</div><div class="note-small">${rows.length} résultat${rows.length>1?'s':''} reçu${rows.length>1?'s':''}</div></div>
+      <div class="stat"><h4>Moyenne indicative</h4><div class="bignote" style="font-size:40px">${fmt(avg)}<span style="font-size:20px"> / 20</span></div><div class="note-small">Dernier essai de chaque élève</div></div>
+      ${COMPS.map((c,i)=>`<div class="stat"><h4>${c.id} · ${c.name}</h4><div class="bar">${LEVELS.map(l=>counts[i][l.k]?`<span style="width:${counts[i][l.k]*100/last.length}%;background:${col[l.k]}" title="${l.label} : ${counts[i][l.k]}"></span>`:'').join('')}</div><div class="legend">${LEVELS.map(l=>`<span>${l.label} : ${counts[i][l.k]}</span>`).join('')}</div></div>`).join('')}
+    </div>
+    <div class="row" style="margin-top:16px"><button class="btn" id="cpt">Copier le tableau</button><span class="note-small" id="cpm" aria-live="polite">Se colle dans un tableur, colonne par colonne.</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Passée le</th><th>Essais</th><th>Note /20</th>${COMPS.map(c=>`<th>${c.id}</th>`).join('')}</tr></thead><tbody>
+    ${last.map(r=>`<tr><td>${esc(r.name)}${r.manual?' <span class="note-small">(code manuel)</span>':''}</td><td>${esc(r.classe)}</td><td>${d(r.ts)}</td><td>${r.count}</td><td><b>${fmt(r.note)}</b></td>${COMPS.map((c,i)=>{ const l=levelOf(r.comp[i],c.max); return `<td><span class="lvl ${l.k}">${l.label}</span> <span class="note-small">${fmt(r.comp[i])}/${c.max}</span></td>`; }).join('')}</tr>`).join('')}
+    </tbody></table></div>
+    <p class="note-small">Niveaux, en pourcentage des points de la compétence : non acquis sous 40 %, fragile de 40 à 64 %, acquis de 65 à 89 %, dépassé à partir de 90 %. ${COMPS.map(c=>c.id+' : '+c.name.toLowerCase()+' ('+c.max+' points)').join(' · ')}. Tous les essais restent visibles dans la feuille Google.</p>`;
+  const cf = document.getElementById('cf'); if(cf) cf.onchange=()=>{ state.classFilter=cf.value; renderResults(out, rows); };
+  document.getElementById('cpt').onclick=async()=>{
+    const head = ['Élève','Classe','Passée le','Essais','Note /20',...COMPS.map(c=>c.id+' '+c.name),...COMPS.map(c=>c.id+' points')].join('\t');
+    const lines = last.map(r=>[r.name,r.classe,d(r.ts),r.count,fmt(r.note),...COMPS.map((c,i)=>levelOf(r.comp[i],c.max).label),...r.comp.map(fmt)].join('\t'));
+    const msg=document.getElementById('cpm');
+    try{ await navigator.clipboard.writeText([head,...lines].join('\n')); msg.textContent='Tableau copié.'; }catch(e){ msg.textContent='Copie impossible depuis cette fenêtre.'; }
+  };
+}
+/* ---------- Routage ---------- */
+const state = {view:{name:'home'}, ev:null};
+function render(){
+  renderWho();
+  if(location.hash==='#prof') return viewProf();
+  if(state.view.name==='capsule') return viewCapsule();
+  if(state.view.name==='eval') return viewEval();
+  return viewHome();
+}
+function route(){ render(); }
+window.addEventListener('hashchange', ()=>{ if(location.hash!=='#prof' && state.view.name==='home'){} render(); window.scrollTo(0,0); });
+render();
+</script>
+</body>
+</html>
